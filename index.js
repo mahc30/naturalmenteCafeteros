@@ -47,6 +47,7 @@ app.get('/tablas', (req, res) => {
             <th style='border: 1px solid black; text-align: center;'> Presion_Atmosférica</th>
             <th style='border: 1px solid black; text-align: center;'> Humedad (%)</th>
             <th style='border: 1px solid black; text-align: center;'> Fecha</th>
+            <th style='border: 1px solid black; text-align: center;'> Cultivo</th>
         </tr>`;
 
         result.forEach(element => {
@@ -57,6 +58,7 @@ app.get('/tablas', (req, res) => {
             html += "<td style='border: 1px solid black; text-align:center'>" + element.pa + "</td>"
             html += "<td style='border: 1px solid black; text-align:center'>" + element.hum + "</td>"
             html += "<td style='border: 1px solid black; text-align:center'>" + element.fecha + "</td>"
+            html += "<td style='border: 1px solid black; text-align:center'>" + element.id_cultivo + "</td>"
             html += "</tr>"
         })
 
