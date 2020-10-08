@@ -22,7 +22,7 @@ app.use(bodyParser.json())
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
 
-app.get('/tablas', (req, res) => {
+app.get('/reportes', (req, res) => {
     let sql = "select * from readings";
     db.query(sql, (err, result) => {
         if (err) {
@@ -32,11 +32,7 @@ app.get('/tablas', (req, res) => {
 
         let html = `
         <h1> Registros del Monitoreo del Cultivo </h1>
-        <div style="display: flex; " >
-        <div style="flex: 50%; text-align:center;">
-        <hr>
-        <h1> Lecturas de Sensores </h1>
-        <hr>
+   
         
     <table style='border: 1px solid black';>
         <tbody>
@@ -64,15 +60,22 @@ app.get('/tablas', (req, res) => {
 
         html += `
         </tbody>
-        </table>
-        </div>`;
+        </table>`;
 
+        res.send(html);
 
-        html += `
+    });
+})
+
+app.get('/alertas', (req, res) => {
+    let sql = `
+    SELECT a.desc, a.value, r.fecha, r.id_cultivo
+    FROM alerts a JOIN readings r on a.reading = r.id;
+    `
+
+    let html = `
+        <h1> Alertas del Monitoreo del Cultivo </h1>
         <div style="flex: 50%; text-align:center;">
-        <hr>
-        <h1> Alertas </h1>
-        <hr>
     <table>
     <tbody>
         <tr>
@@ -82,33 +85,26 @@ app.get('/tablas', (req, res) => {
             <th style='border: 1px solid black; text-align: center;'> Cultivo</th>
         </tr>`;
 
-        sql = `
-        SELECT a.desc, a.value, r.fecha, r.id_cultivo
-        FROM alerts a JOIN readings r on a.reading = r.id;
-        `
-        db.query(sql, (err, result) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            result.forEach(element => {
-                html += "<tr>"
-                html += "<td style='border: 1px solid black; text-align:center'>" + element.desc + "</td>"
-                html += "<td style='border: 1px solid black; text-align:center'>" + element.value + "</td>"
-                html += "<td style='border: 1px solid black; text-align:center'>" + element.fecha + "</td>"
-                html += "<td style='border: 1px solid black; text-align:center'>" + element.id_cultivo + "</td>"
-                html += "</tr>"
-            })
 
-            html += `</tbody></table></div></div>`;
-            res.send(html);
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        result.forEach(element => {
+            html += "<tr>"
+            html += "<td style='border: 1px solid black; text-align:center'>" + element.desc + "</td>"
+            html += "<td style='border: 1px solid black; text-align:center'>" + element.value + "</td>"
+            html += "<td style='border: 1px solid black; text-align:center'>" + element.fecha + "</td>"
+            html += "<td style='border: 1px solid black; text-align:center'>" + element.id_cultivo + "</td>"
+            html += "</tr>"
         })
-    });
 
+        html += `</tbody></table></div></div>`;
+        res.send(html);
+    })
+});
 
-
-
-})
 
 app.post('/save', (req, res) => {
 
